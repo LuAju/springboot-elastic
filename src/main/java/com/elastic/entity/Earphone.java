@@ -13,6 +13,7 @@ public class Earphone {
     @Id
     private String id;
     @Field(type = FieldType.Text)
+    // 商标
     private String band;
     @Field(type = FieldType.Text)
     private String category;
