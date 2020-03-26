@@ -16,5 +16,12 @@ public class EarphoneService {
         return earphoneDao.matchAllForPage(fieldName,"earphone","earphones",from,size);
     }
 
+    public List<Earphone> queryStringByName(String fieldName, Integer from ,Integer to) {
+        return earphoneDao.queryStringByName(fieldName, from, to);
+    }
+
+    public List<Earphone> queryTermByName(String fieldName,Integer from, Integer to) {
+        return earphoneDao.queryTermByName(fieldName, from, to);
+    }
 
 }

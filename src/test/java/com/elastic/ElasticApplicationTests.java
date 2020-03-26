@@ -58,6 +58,12 @@ public class ElasticApplicationTests {
         System.out.println(earphones);
     }
 
+    @Test
+    public void fun4(){
+//        List<Earphone> earphones = earphoneDao.queryString();
+//        System.out.println(earphones);
+    }
+
     // 查询
     @Test
     public void findAll(){
