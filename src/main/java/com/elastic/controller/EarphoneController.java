@@ -40,4 +40,32 @@ public class EarphoneController {
         List<Earphone> earphones = earphoneService.queryTermByName(queryString, Integer.parseInt(from), Integer.parseInt(size));
         return earphones.toString();
     }
+
+    // 对价格添加过滤器，选择销量从1000到10000的产品
+    @RequestMapping("queryTermByNameFilterSales")
+    public String queryTermByNameFilterSales(@RequestParam(defaultValue = "0", required = false) String from ,
+                                  @RequestParam(defaultValue = "2",required = false) String size,
+                                  String queryString){
+        List<Earphone> earphones = earphoneService.queryTermByNameFilterSales(queryString, Integer.parseInt(from), Integer.parseInt(size));
+        return earphones.toString();
+    }
+
+    @RequestMapping("fuzzyQuery")
+    public String fuzzyQuery(String queryString,String fieldName, Integer from, Integer size){
+        List<Earphone> earphoneList = earphoneService.fuzzyQuery(fieldName, queryString, from, size);
+        return earphoneList.toString();
+    }
+
+    @RequestMapping("prefixQuery")
+    public String prefixQuery(String queryString,String fieldName, Integer from, Integer size){
+        List<Earphone> earphoneList = earphoneService.prefixQuery(fieldName, queryString, from, size);
+        return earphoneList.toString();
+    }
+
+    @RequestMapping("wildQuery")
+    public String wildQuery(String queryString,String fieldName, Integer from, Integer size){
+        List<Earphone> earphoneList = earphoneService.wildQuery(fieldName, queryString, from, size);
+        return earphoneList.toString();
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.elastic.dao;
 
 import com.elastic.entity.Earphone;
+import com.elastic.service.EarphoneService;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
@@ -24,9 +25,12 @@ import java.util.Iterator;
 import java.util.List;
 
 @Component
-public class EarphoneDao {
+public class EarphoneDao extends EarphoneDaoBase {
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Autowired
+    private EarphoneDaoBase earphoneDaoBase;
 
     public List<Earphone> matchAllForPage(String fieldName, String indexName,String typeName, int from, int size){
         List<Earphone> earphones = new ArrayList<>();
@@ -59,6 +63,8 @@ public class EarphoneDao {
         QueryStringQueryBuilder queryStringQueryBuilder = QueryBuilders.queryStringQuery(queryString)
                 .analyzer("ik_max_word")
                 .field("name");
+
+
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withIndices("earphone") // 设置索引

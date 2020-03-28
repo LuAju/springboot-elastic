@@ -6,6 +6,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,22 +31,35 @@ public class EarphoneDaoBase {
 
     @Value("earphone")
     private String indexName;
+
     @Value("earphones")
     private String typeName;
+
+    // 查询语句
     @NotNull
     private QueryBuilder queryBuilder;
 
+    // 查询结果的起始页数
     @Value("0")
     private Integer from;
 
+    // 每页的数量
     @Value("2")
     private Integer size;
 
-    private FieldSortBuilder fieldSortBuilder;
+    // 排序语句
+    private SortBuilder sortBuilder;
 
-    private SortOrder sortOrder;
-
+    // 高亮语句
     private HighlightField highlightField;
+
+
+    // 过滤语句
+    private QueryBuilder filter;
+
+    public void setFilter(QueryBuilder filter) {
+        this.filter = filter;
+    }
 
     public void setIndexName(String indexName) {
         this.indexName = indexName;
@@ -67,12 +81,11 @@ public class EarphoneDaoBase {
         this.size = size;
     }
 
-    public void setFieldSortBuilder(FieldSortBuilder fieldSortBuilder) {
-        this.fieldSortBuilder = fieldSortBuilder;
-    }
 
-    public void setSortOrder(SortOrder sortOrder) {
-        this.sortOrder = sortOrder;
+
+
+    public void setSortBuilder(SortBuilder sortBuilder) {
+        this.sortBuilder = sortBuilder;
     }
 
     public void setHighlightField(HighlightField highlightField) {
@@ -82,15 +95,23 @@ public class EarphoneDaoBase {
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
-    public List<Earphone> operateEarphobeDao(){
+    public List<Earphone> operateEarphoneDao(){
         List<Earphone> earphones = new ArrayList<>();
 
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder()
                 .withIndices(this.indexName) // 设置索引
                 .withTypes(this.typeName)  // 设置类
                 .withQuery(queryBuilder) //设置查找语句
-                .withPageable(PageRequest.of(from,size))
-                .build();
+                .withPageable(PageRequest.of(from,size));
+
+        if (sortBuilder !=null) {
+            nativeSearchQueryBuilder = nativeSearchQueryBuilder.withSort(sortBuilder);
+        }
+        if (filter != null) {
+            nativeSearchQueryBuilder = nativeSearchQueryBuilder.withFilter(filter);
+        }
+
+        SearchQuery searchQuery = nativeSearchQueryBuilder.build();
 
         AggregatedPage<Earphone> earphones1 = elasticsearchTemplate.queryForPage(searchQuery, Earphone.class);
         Iterator<Earphone> iterator = earphones1.iterator();

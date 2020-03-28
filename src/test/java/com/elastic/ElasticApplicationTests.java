@@ -1,10 +1,13 @@
 package com.elastic;
 
 import com.elastic.dao.BookRepository;
+import com.elastic.dao.EarphoneDaoBase;
 import com.elastic.dao.EarphoneRepository;
 import com.elastic.entity.Book;
 import com.elastic.entity.Earphone;
 import com.elastic.dao.EarphoneDao;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,10 @@ public class ElasticApplicationTests {
 
     @Autowired
     private EarphoneDao earphoneDao;
+
+    @Autowired
+    private EarphoneDaoBase earphoneDaoBase;
+
 
     @Test
     public void contextLoads() {
@@ -62,6 +69,22 @@ public class ElasticApplicationTests {
     public void fun4(){
 //        List<Earphone> earphones = earphoneDao.queryString();
 //        System.out.println(earphones);
+        earphoneDaoBase.setQueryBuilder(QueryBuilders.prefixQuery("name","手"));
+        List<Earphone> earphones = earphoneDaoBase.operateEarphoneDao();
+        System.out.println(earphones);
+    }
+
+    @Test
+    public void fun5(){
+//        List<Earphone> earphones = earphoneDao.queryString();
+//        System.out.println(earphones);
+        QueryStringQueryBuilder queryStringQueryBuilder = QueryBuilders.queryStringQuery("小米耳机")
+                .analyzer("ik_max_word")
+                .field("name");
+        earphoneDaoBase.setSize(3);
+        earphoneDaoBase.setQueryBuilder(QueryBuilders.matchAllQuery());
+        List<Earphone> earphones = earphoneDaoBase.operateEarphoneDao();
+        System.out.println(earphones);
     }
 
     // 查询
