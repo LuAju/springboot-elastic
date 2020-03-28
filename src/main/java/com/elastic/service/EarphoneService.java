@@ -3,6 +3,7 @@ package com.elastic.service;
 import com.elastic.dao.EarphoneDaoBase;
 import com.elastic.entity.Earphone;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,10 @@ public class EarphoneService {
         earphoneDaoBase.setSize(size);
         earphoneDaoBase.setFrom(from);
         earphoneDaoBase.setQueryBuilder(QueryBuilders.termQuery("name",queryString));
+        HighlightBuilder.Field nameField = new HighlightBuilder.Field("*")
+                .preTags("<span style='color:red'>")
+                .postTags(" </span>").requireFieldMatch(false);
+        earphoneDaoBase.setHighlightBuilder(nameField);
         return earphoneDaoBase.operateEarphoneDao();
     }
 
